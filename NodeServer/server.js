@@ -16,6 +16,10 @@ mongoose.connect('mongodb://localhost:27017/courses');
 
 var Course     = require('./models/courses');
 
+var cors = require('cors')
+
+app.use(cors()) 
+
 router.use(function(req, res, next) {
     console.log('Something is happening');
     next();
@@ -44,6 +48,15 @@ router.route('/courses')
         });
 
     })
+    .delete(function(req, res){
+        Course.remove({}, function(err, course){
+                if(err)
+                  res.send(err)
+                  
+                res.json({message: 'All courses removed'})
+        });
+                
+    })
     
         .get(function(req, res) {
         Course.find(function(err, courses) {
@@ -51,6 +64,18 @@ router.route('/courses')
                 res.send(err);
 
             res.json(courses);
+        });
+    });
+router.route('/courses/:course_id')
+
+    .delete(function(req, res) {
+        Course.remove({
+            _id: req.params.course_id
+        }, function(err, course) {
+            if (err)
+                res.send(err);
+
+            res.json({ message: 'Successfully deleted' });
         });
     });
 
